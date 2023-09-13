@@ -1,0 +1,14 @@
+<annotation>
+	<folder>newimages</folder>
+	<filename>frontleft_fisheye_image_0619.jpg</filename>
+	<path>C:\Users\harsh\Documents\spot-sdk\python\examples\fetch\ball1\newimages\frontleft_fisheye_image_0619.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>480</width>
+		<height>640</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+</annotation>

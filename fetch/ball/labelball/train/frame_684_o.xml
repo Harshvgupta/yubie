@@ -1,0 +1,26 @@
+<annotation>
+	<folder>frames</folder>
+	<filename>frame_684.jpg</filename>
+	<path>C:\Users\harsh\OneDrive\Documents\content\frames\frame_684.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1280</width>
+		<height>720</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>ball</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>457</xmin>
+			<ymin>455</ymin>
+			<xmax>572</xmax>
+			<ymax>572</ymax>
+		</bndbox>
+	</object>
+</annotation>
