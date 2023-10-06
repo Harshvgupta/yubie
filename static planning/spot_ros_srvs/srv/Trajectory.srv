@@ -1,3 +1,0 @@
-geometry_msgs/PoseArray waypoints
----
-geometry_msgs/Pose final_pose

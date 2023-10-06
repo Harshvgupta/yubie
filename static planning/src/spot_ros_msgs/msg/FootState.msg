@@ -1,2 +1,0 @@
-geometry_msgs/Vector3 foot_position_rt_body
-uint8 contact
