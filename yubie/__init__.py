@@ -1,17 +1,17 @@
 from .main import (
     Topics as Topics,
-    VisionModule,
+    vision_module as VisionModule,
     pubsub
 )
 from .modules.Vision import vision
+from .test import vision_test
 
 
 def dev():
+    # Here multiple modules can be called
     print("Initialized Dev Mode")
-    vision.main()
 
 
 def test():
-    detector = VisionModule.get_on_demand_detector()
-    output = detector.get_detections()
-    print(output)
+    # Here multiple test files can be called and tested
+    vision_test.main()

@@ -1,16 +1,16 @@
 from dataclasses import dataclass
 from typing import Dict
+from PIL import Image
 import numpy as np
 
 
-@dataclass(kw_only=True)
+@dataclass
 class ImageObject:
     label: str
-    data: np.ndarray
-    meta: Dict[str, any] = {}
+    data: np.ndarray | Image.Image
 
 
-@dataclass(kw_only=True)
+@dataclass
 class StreamingOptions():
     calls_per_second: float
     resumable: bool = False

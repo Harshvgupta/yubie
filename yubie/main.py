@@ -33,7 +33,7 @@ class OnDemandDetector():
     def _store_latest_image(self, image):
         self.image = image
 
-    def get_detections(self, classes_to_detect: list[str]):
+    def get_detections(self, classes_to_detect: list[str] = []):
         return self.instance.detect(self.image, classes_to_detect)
 
 
@@ -63,9 +63,10 @@ class VisionModule():
 
     @classmethod
     def register_model(cls, model: IObjectDetector, default: bool = False) -> None:
-        cls._registered_models[model.name] = model
+        name = model.__class__.__name__
+        cls._registered_models[name] = model
         if default or cls._default_model is None:
-            cls._default_model = model.name
+            cls._default_model = name
 
     def get_stream_detector(self, callback: Callable, model_name: str = None, options: StreamingOptions = {}) -> StreamDetector:
         if not model_name:
@@ -90,3 +91,4 @@ class VisionModule():
 
 # Main Function
 pubsub = PubSubModule(Topics)
+vision_module = VisionModule()
