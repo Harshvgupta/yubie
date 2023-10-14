@@ -8,7 +8,7 @@ import json
 
 class YoloV8M(IObjectDetector):
     def __init__(self):
-        self.model = YOLO('yolov8m.pt')
+        self.model = YOLO('./yubie/models/vision/yolov8m.pt')
 
     def detect(self, image: ImageObject, classToDetect: list[str] = []):
         results = self.model.predict(
