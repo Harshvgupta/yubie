@@ -1,8 +1,10 @@
 {
-    "test": [
-        "vision"
-    ],
-    "dev": [
-        "vision"
-    ]
+    "user": "vignesh",
+    "profiles": {
+        "vignesh": {
+            "test": {
+                "filename": "vision_test.py"
+            }
+        }
+    }
 }
