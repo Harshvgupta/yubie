@@ -2,8 +2,8 @@
     "user": "vignesh",
     "profiles": {
         "vignesh": {
-            "test": {
-                "filename": "vision_test.py"
+            "yubie-test": {
+                "test-suite": "vision_test"
             }
         }
     }

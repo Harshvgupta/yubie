@@ -81,7 +81,7 @@ class VisionModule():
     def get_on_demand_detector(self, model_name: str = None) -> OnDemandDetector:
         if not model_name:
             model_name = self._default_model
-
+            
         if model_name not in self._registered_models:
             raise ModelNotFoundException(model_name)
 
