@@ -13,5 +13,6 @@ setup(
     [console_scripts]
         yubie-dev=yubie:dev
         yubie-test=yubie:test
+        yubie-collect-image-data=yubie:collect_image_data
     """
 )

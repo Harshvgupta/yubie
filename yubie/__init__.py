@@ -1,10 +1,11 @@
 import importlib
+import re
 
 from glob import glob
 from pathlib import Path
 from InquirerPy import inquirer
 from yubie.src.decorators import extract_config
-from yubie.src.utils import get_test_files
+from yubie.src.utils import get_sdk_mapping, get_test_files
 from .main import (
     Topics as Topics,
     vision_module as VisionModule,
@@ -12,12 +13,12 @@ from .main import (
 )
 
 modules = {}
-
+cwd = Path(__file__).parent
 
 def init_all_modules():
     global modules
     prefix = 'yubie.modules.'
-    cwd = Path(__file__).parent
+    
     modules_folder_path = cwd.joinpath('./modules')
     all_files = [file.replace('.py', '').replace('/', '.')
                  for file in glob('**/*.py', root_dir=modules_folder_path)]
@@ -49,3 +50,31 @@ def test(has_custom_flag, profile_config):
         module.main()
     except ModuleNotFoundError:
         print(f"Module '{test_module}' not found.")
+
+@extract_config
+def collect_image_data(has_custom_flag, profile_config):
+    sdk_mappings = get_sdk_mapping()
+    if has_custom_flag or not profile_config:
+        profile_config['sdk'] = inquirer.fuzzy(
+            message="Select the Robot SDK to connect",
+            choices=sdk_mappings.keys(),
+            max_height=200
+        ).execute()
+    
+    config = sdk_mappings[profile_config['sdk']]
+    entry_points = config.get('entry_points', {})
+    module_for_image_data = entry_points.get('collect_image_data', None)
+    if not module_for_image_data:
+        print(f"Module for 'collect_image_data' is not provided in entry_points of {profile_config['sdk']}/mapping.json")
+    
+    def prepare(module_name):
+        module_name = re.sub(r'(\.py$|^\./)', '', module_name)
+        return module_name.replace('/', '.')
+       
+    try:
+        init_all_modules()
+        actual_module = 'sdk.' + profile_config['sdk'] +'.' +prepare(module_for_image_data)
+        module = importlib.import_module(actual_module)
+        module.main()
+    except ModuleNotFoundError:
+        print(f"Module '{actual_module}' not found.")

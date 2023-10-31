@@ -4,7 +4,10 @@
         "vignesh": {
             "yubie-test": {
                 "test-suite": "vision_test"
+            },
+            "yubie-collect-image-data" : {
+                "sdk" : "spot"
             }
-        }
+        } 
     }
 }

@@ -1,0 +1,5 @@
+{
+    "entry_points" : {
+        "collect_image_data" : "./scripts/save_image_data.py"
+    }
+}
