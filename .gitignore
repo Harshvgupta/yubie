@@ -1,1 +1,6 @@
 yolov5
+yubie.egg-info
+yubie
+build
+dist
+.env
