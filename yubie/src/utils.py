@@ -38,7 +38,7 @@ def get_sdk_mapping():
     def get_mapping_from_folder_path(folder_path):
         with open(cwd.joinpath(folder_path,'mapping.json').absolute(), 'r') as file:
             return json.load(file)
-    sdk_paths = glob('../../sdk/*', root_dir=cwd.absolute())
+    sdk_paths = glob('../sdk/*', root_dir=cwd.absolute())
     mappings = {
         Path(sdk_path).name : get_mapping_from_folder_path(sdk_path)
         for sdk_path in sdk_paths
