@@ -33,6 +33,9 @@ class OnDemandDetector():
     def _store_latest_image(self, image):
         self.image = image
 
+    def render(self, image, classes_to_detect: list[str] = []):
+        return self.instance.render(image)
+
     def get_detections(self, classes_to_detect: list[str] = []):
         return self.instance.detect(self.image, classes_to_detect)
 
@@ -81,7 +84,7 @@ class VisionModule():
     def get_on_demand_detector(self, model_name: str = None) -> OnDemandDetector:
         if not model_name:
             model_name = self._default_model
-            
+
         if model_name not in self._registered_models:
             raise ModelNotFoundException(model_name)
 

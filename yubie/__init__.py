@@ -2,6 +2,8 @@ import importlib
 import re
 
 from glob import glob
+from dataclasses import dataclass
+from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 from InquirerPy import inquirer
 from yubie.src.decorators import extract_config
@@ -12,13 +14,16 @@ from .main import (
     pubsub
 )
 
+load_dotenv(find_dotenv())
+
 modules = {}
 cwd = Path(__file__).parent
+
 
 def init_all_modules():
     global modules
     prefix = 'yubie.modules.'
-    
+
     modules_folder_path = cwd.joinpath('./modules')
     all_files = [file.replace('.py', '').replace('/', '.')
                  for file in glob('**/*.py', root_dir=modules_folder_path)]
@@ -51,6 +56,13 @@ def test(has_custom_flag, profile_config):
     except ModuleNotFoundError:
         print(f"Module '{test_module}' not found.")
 
+
+@dataclass
+class SpotOptions:
+    hostname = '192.168.80.3'
+    verbose = False
+
+
 @extract_config
 def collect_image_data(has_custom_flag, profile_config):
     sdk_mappings = get_sdk_mapping()
@@ -60,21 +72,25 @@ def collect_image_data(has_custom_flag, profile_config):
             choices=sdk_mappings.keys(),
             max_height=200
         ).execute()
-    
+
     config = sdk_mappings[profile_config['sdk']]
     entry_points = config.get('entry_points', {})
     module_for_image_data = entry_points.get('collect_image_data', None)
     if not module_for_image_data:
-        print(f"Module for 'collect_image_data' is not provided in entry_points of {profile_config['sdk']}/mapping.json")
-    
+        print(
+            f"Module for 'collect_image_data' is not provided in entry_points of {profile_config['sdk']}/mapping.json")
+
     def prepare(module_name):
         module_name = re.sub(r'(\.py$|^\./)', '', module_name)
         return module_name.replace('/', '.')
-       
+
     try:
         init_all_modules()
-        actual_module = 'sdk.' + profile_config['sdk'] +'.' +prepare(module_for_image_data)
+        actual_module = 'yubie.sdk.' + \
+            profile_config['sdk'] + '.' + prepare(module_for_image_data)
         module = importlib.import_module(actual_module)
-        module.main()
+
+        options = SpotOptions()
+        module.main(options)
     except ModuleNotFoundError:
         print(f"Module '{actual_module}' not found.")
