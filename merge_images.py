@@ -13,7 +13,7 @@ frame_width = 480
 frame_height = 640
 fps = 3
 
-images_directory = '/Users/pranomvignesh/WorkFolder/yubie/fetch/ball/cimages/'
+images_directory = '/Users/pranomvignesh/WorkFolder/yubie/fetch/ball/colord2/'
 folders = ['left', 'right']
 
 
