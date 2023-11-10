@@ -1,0 +1,7 @@
+names:
+- person
+- ball
+nc: 2
+train: /home/yubie/work/yubie/assets/datasets/supervised_trail_run_2/train/images
+val: /home/yubie/work/yubie/assets/datasets/supervised_trail_run_2/valid/images
+test: /home/yubie/work/yubie/assets/datasets/supervised_trail_run_2/valid/images

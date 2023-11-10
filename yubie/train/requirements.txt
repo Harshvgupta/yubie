@@ -1,0 +1,10 @@
+autodistill-yolov8
+autodistill
+autodistill-grounded-sam 
+autodistill-yolov8
+roboflow
+supervision==0.9.0
+torch 
+torchvision 
+torchaudio
+https://download.pytorch.org/whl/cu118
