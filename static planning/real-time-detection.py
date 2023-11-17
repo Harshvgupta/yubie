@@ -10,21 +10,26 @@ import argparse
 import logging
 import sys
 import time
+import os
 
 import cv2
 import numpy as np
 from scipy import ndimage
+from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
 
 import bosdyn.client
 import bosdyn.client.util
 from bosdyn.api import image_pb2
 from bosdyn.client.image import ImageClient, build_image_request
 from bosdyn.client.time_sync import TimedOutError
-
+from datetime import datetime
 from ultralytics import YOLO
+
 model = YOLO(
     '/Users/pranomvignesh/Workfolder/yubie/yubie/train/runs/detect/train/weights/best.pt')
 
+CWD = Path(__file__).parent
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +43,17 @@ ROTATION_ANGLE = {
     'left_fisheye_image': 0,
     'right_fisheye_image': 180
 }
+
+current_date = datetime.now()
+formatted_date = current_date.strftime("%b_%d_%y-%I_%M_%p")
+IMAGE_SRC = f'./image_source/{formatted_date}'
+IMAGE_DEST = f'./detections/{formatted_date}'
+
+
+def create_dirs(rel_path):
+    abs_path = CWD.joinpath(rel_path).absolute()
+    if not os.path.exists(abs_path):
+        os.makedirs(abs_path)
 
 
 def image_to_opencv(image, auto_rotate=True):
@@ -100,7 +116,7 @@ def detect_objects(image):
                     cv2.circle(image, (cx, cy), radius, centroid_color, -1)
                     cv2.rectangle(image, (x1, y1), (x2, y2),
                                   box_color, thickness)
-    return image
+    return image, results
 
 
 def main(argv):
@@ -123,7 +139,26 @@ def main(argv):
         action='store_true')
     parser.add_argument('--auto-rotate', help='rotate right and front images to be upright',
                         action='store_true')
+    parser.add_argument('--save-source', help='saves the source image',
+                        action='store_false')
+    parser.add_argument('--save-detections', help='saves the detections',
+                        action='store_false')
     options = parser.parse_args(argv)
+
+    # Overwrite arguments
+
+    options.disable_full_screen = True
+    options.auto_rotate = True
+    options.save_source = os.environ.get('SAVE_SOURCE', False)
+    options.save_detections = os.environ.get('SAVE_DETECTIONS', False)
+
+    if options.save_source:
+        for image_src in options.image_sources:
+            create_dirs(f'{IMAGE_SRC}/{image_src}')
+
+    if options.save_detections:
+        for image_src in options.image_sources:
+            create_dirs(f'{IMAGE_DEST}/{image_src}')
 
     # Create robot object with an image client.
     sdk = bosdyn.client.create_standard_sdk('image_capture')
@@ -134,7 +169,9 @@ def main(argv):
 
     image_client = robot.ensure_client(options.image_service)
     requests = [
-        build_image_request(source, quality_percent=options.jpeg_quality_percent,
+        build_image_request(source,
+                            pixel_format=image_pb2.Image.PIXEL_FORMAT_RGB_U8,
+                            quality_percent=options.jpeg_quality_percent,
                             resize_ratio=options.resize_ratio) for source in options.image_sources
     ]
 
@@ -156,7 +193,6 @@ def main(argv):
             images_future = image_client.get_image_async(requests, timeout=0.5)
             while not images_future.done():
                 keystroke = cv2.waitKey(25)
-                print(keystroke)
                 if keystroke == VALUE_FOR_ESC_KEYSTROKE or keystroke == VALUE_FOR_Q_KEYSTROKE:
                     sys.exit(1)
             images = images_future.result()
@@ -173,15 +209,25 @@ def main(argv):
             _LOGGER.warning(err)
             continue
         for i in range(len(images)):
-            image, _ = image_to_opencv(images[i], options.auto_rotate)
-            image = detect_objects(image)
+            image, ext = image_to_opencv(images[i], options.auto_rotate)
+            if options.save_source:
+                cv2.imwrite(
+                    f'{IMAGE_SRC}/{images[i].source.name}/image_{str(image_count).zfill(5)}{ext}', image)
+            image, results = detect_objects(image)
+            if options.save_detections:
+                cv2.imwrite(
+                    f'{IMAGE_DEST}/{images[i].source.name}/image_{str(image_count).zfill(5)}{ext}', image)
+                for result in results:
+                    result.save_txt(
+                        f'{IMAGE_DEST}/{images[i].source.name}/image_{str(image_count).zfill(5)}.txt')
             cv2.imshow(images[i].source.name, image)
         keystroke = cv2.waitKey(options.capture_delay)
         image_count += 1
-        print(f'Mean image retrieval rate: {image_count/(time.time() - t1)}Hz')
+        # print(f'Mean image retrieval rate: {image_count/(time.time() - t1)}Hz')
 
 
 if __name__ == '__main__':
+    load_dotenv(find_dotenv())
     if not main(sys.argv[1:]):
         sys.exit(1)
 
