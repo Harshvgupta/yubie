@@ -16,12 +16,12 @@ from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
 from ultralytics import YOLO
 
-REL_MODEL_PATH = ''
+REL_MODEL_PATH = '../../models/best.pt'
 
 
 class Fetch():
     def __init__(self):
-        self.model = YOLO('REL_MODEL_PATH')
+        self.model = YOLO(REL_MODEL_PATH)
         self.img_sub = rospy.Subscriber(
             "/spot_image", sensor_msgs.msg.Image, self.image_callback, queue_size=20)
         # Subscribe depth
@@ -84,11 +84,13 @@ class Fetch():
         image = self.bridge.imgmsg_to_cv2(msg)
         detections = self.get_detections(image)
         boundingBoxes, centroids = self.extract_info(detections)
+
         # @Harsh let me know how convert bounding boxes and centroid to pose and publish
-        cond, num = self.get_obj_bounding_box(self.image)
-        if cond == True and num == 1:
+        # cond, num = self.get_obj_bounding_box(self.image)
+        if len(centroids) > 0:
             print("ball identified")
-            self.get_world_pos(self.box_center, self.depthc)
+            # @Viki add centroid with high accuracy
+            self.get_world_pos(self.centroids[0], self.depthc)
             print(self.x, self.depthc)
             self.get_obj_pose(self.x, self.y, self.depthc)
             t = self.tf.getLatestCommonTime(
@@ -248,7 +250,8 @@ class Fetch():
             use_normalized_coordinates=True,
             max_boxes_to_draw=100,
             min_score_thresh=0.1,
-            agnostic_mode=False)
+            agnostic_mode=False
+        )
         cv2.imshow("figure", image_np_with_detections)
         cv2.waitKey(1)
 
