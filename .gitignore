@@ -3,3 +3,11 @@ build
 devel
 logs
 .env
+dist
+fetch
+fetch-yolo
+nlp
+research_papers
+static planning
+yubie
+yubie.egg-info
