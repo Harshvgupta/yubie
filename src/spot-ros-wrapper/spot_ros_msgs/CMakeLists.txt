@@ -22,6 +22,8 @@ add_message_files(
   BehaviorFaultState.msg
   FootState.msg
   RobotState.msg
+  Centroid.msg
+  CentroidPositions.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
