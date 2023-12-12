@@ -482,15 +482,15 @@ class SpotInterface:
         spot_tf_static_broadcaster = tf2_ros.StaticTransformBroadcaster()
 
         image_only_pub = rospy.Publisher(
-            "spot_image", sensor_msgs.msg.Image, queue_size=20)
+            "spot_image", sensor_msgs.msg.Image, queue_size=1)
 
         camera_info_pub = rospy.Publisher(
-            "spot_cam_info", sensor_msgs.msg.CameraInfo, queue_size=20)
+            "spot_cam_info", sensor_msgs.msg.CameraInfo, queue_size=1)
 
         depth_image_pub = rospy.Publisher(
-            "depth_image", sensor_msgs.msg.Image, queue_size=20)
+            "depth_image", sensor_msgs.msg.Image, queue_size=1)
         
-        depth_array_pub = rospy.Publisher("depth_array", std_msgs.msg.Float64MultiArray, queue_size=20)
+        depth_array_pub = rospy.Publisher("depth_array", std_msgs.msg.Float64MultiArray, queue_size=1)
 
         # For RViz 3rd person POV visualization
         if self.third_person_view:

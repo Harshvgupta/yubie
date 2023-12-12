@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="model" default="$(find spot_urdf)/urdf/spot.urdf"/>
-  <arg name="gui" default="true" />
+  <!-- <arg name="gui" default="true" /> -->
   <arg name="rvizconfig" default="$(find spot_urdf)/rviz/occupancy_grid_config.rviz" />
 
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
@@ -11,6 +11,6 @@
   </node>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   <node name="static_tf_pub_base_to_base_link" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base_link base 100" />
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
 
 </launch>
